@@ -7,16 +7,16 @@
 /* Values are RGB channel triplets so Tailwind opacity modifiers work. */
 /* ------------------------------------------------------------------ */
 :root {
-  --navy: 18 33 62; /* #12213E primary dark */
-  --teal: 28 114 147; /* #1C7293 secondary accent */
-  --mint: 0 217 192; /* #00D9C0 sharp accent */
-  --light: 247 249 252; /* #F7F9FC light section bg */
-  --text-muted: 91 107 130; /* #5B6B82 body text on light */
+  --navy: 10 10 12; /* #0A0A0C primary near-black */
+  --teal: 142 142 150; /* #8E8E96 neutral grey */
+  --mint: 245 245 246; /* #F5F5F6 white accent */
+  --light: 250 250 250; /* #FAFAFA light section bg */
+  --text-muted: 113 113 122; /* #71717A body text on light */
   --white: 255 255 255;
-  --edge-light: 227 232 240; /* #E3E8F0 subtle light border */
-  --edge-dark: 26 46 82; /* #1A2E52 subtle dark border */
-  --body-on-dark: 199 211 232; /* #C7D3E8 body text on dark */
-  --danger: 226 84 84; /* muted red for "without" bullets */
+  --edge-light: 40 40 44; /* #28282C subtle light border */
+  --edge-dark: 42 42 48; /* #2A2A30 subtle dark border */
+  --body-on-dark: 168 168 178; /* #A8A8B2 body text on dark */
+  --danger: 120 120 128; /* muted grey */
 }
 
 @layer base {
@@ -40,8 +40,32 @@
   }
 }
 
-/* Slow ring rotation used by the Definition "one hub, many connections" visual */
-@keyframes orbit {
+/* ------------------------------------------------------------------ */
+/* Lenis smooth-scroll                                                */
+/* ------------------------------------------------------------------ */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* ------------------------------------------------------------------ */
+/* Keyframes                                                           */
+/* ------------------------------------------------------------------ */
+
+/* Layered ring rotation (Definition) + satellite counter-rotation */
+@keyframes spin {
   from {
     transform: rotate(0deg);
   }
@@ -50,7 +74,7 @@
   }
 }
 
-@keyframes orbit-rev {
+@keyframes spin-rev {
   from {
     transform: rotate(360deg);
   }
@@ -59,7 +83,136 @@
   }
 }
 
-/* Users who prefer reduced motion: kill all non-essential animation */
+/* Satellite "breathing" pulse */
+@keyframes sat-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.82);
+  }
+}
+
+/* Hero scroll cue — a dot traveling down a line */
+@keyframes cue-drop {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(26px);
+    opacity: 0;
+  }
+}
+
+/* Typewriter caret (Building Blocks, Prompts row) */
+@keyframes caret-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.caret-blink {
+  animation: caret-blink 1s step-end infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .caret-blink {
+    animation: none;
+  }
+}
+
+/* Architecture flow: node highlight while the request pulse passes through */
+.arch-node-active {
+  border-color: rgb(var(--mint)) !important;
+  background-color: rgb(245 245 246 / 0.08) !important;
+}
+
+.arch-node-active .node-title {
+  color: rgb(var(--mint)) !important;
+}
+
+/* Simulation: lines flashed while a request travels */
+.sim-line-active {
+  stroke: rgb(245 245 246 / 0.95) !important;
+  stroke-width: 2 !important;
+}
+
+/* Benefits marquee ticker */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: marquee 24s linear infinite;
+}
+
+/* Mesh lines: marching-dash traffic so the "without MCP" tangle reads as busy */
+@keyframes lineFlow {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+.line-flow {
+  animation: lineFlow 1.6s linear infinite;
+}
+
+@keyframes pulseSlow {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulseSlow 2.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+
+  /* Show the list once instead of the duplicate loop half */
+  .marquee-track > ul:nth-child(2) {
+    display: none;
+  }
+
+  .line-flow {
+    animation: none;
+  }
+
+  .animate-pulse-slow {
+    animation: none;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Reduced motion: kill non-essential animation                       */
+/* ------------------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

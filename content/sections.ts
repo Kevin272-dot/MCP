@@ -19,7 +19,6 @@ import {
   Repeat2,
   Server,
   ShieldCheck,
-  Sparkles,
   Unplug,
   User,
   Wrench,
@@ -37,40 +36,43 @@ export const hero = {
     { text: ' and the ', accent: false },
     { text: 'What', accent: true },
   ] as const,
-  subhead: '(the plot twist AI needed 🎬)',
+  subhead: 'An open standard for connecting AI to the systems it relies on',
   supporting:
-    'MCP is an open standard that connects AI models to the tools, data, and services they live beside — one protocol, every integration.',
+    'Models are powerful in isolation, yet limited without context. MCP is the open protocol that lets them reach real systems — tools, data sources, and services — through a single, consistent interface.',
   primaryCta: { label: 'See how it works', href: '#architecture', icon: ArrowDown },
   secondaryCta: { label: 'Read the spec', href: 'https://modelcontextprotocol.io', icon: BookOpen },
+  scrollHint: 'Scroll',
 };
 
 /* ------------------------------------------------------------------ */
 /* 2. The Problem                                                     */
 /* ------------------------------------------------------------------ */
 export const problem = {
-  eyebrow: 'The Problem 😩',
-  title: 'Why do we need MCP?',
-  intro: 'Modern AI models are built different 🧠💪 — but tragically offline.',
+  index: '01',
+  eyebrow: 'The Problem',
+  title: 'AI cannot reach the context it needs.',
+  intro: 'Models reason brilliantly, yet remain cut off from the tools, documents, and data that make their answers useful.',
   cards: [
     {
-      title: 'No Access 🔌',
-      description: 'Models can’t reach emails, databases, files, or APIs on their own.',
+      title: 'No Access',
+      description: 'A model cannot read your inbox, query your database, or inspect the files you are actually working with.',
       icon: Unplug,
     },
     {
-      title: 'Duplicated Work 🔁',
-      description: 'Every AI app builds its own custom integration from scratch.',
+      title: 'Duplicated Work',
+      description: 'Every AI application builds its own integration for the same services, repeating the effort at each vendor.',
       icon: Repeat2,
     },
     {
-      title: 'High Maintenance ⚙️',
-      description: 'Inconsistent implementations pile up across every app and vendor.',
+      title: 'High Maintenance',
+      description: 'Inconsistent implementations grow harder to maintain as each one drifts toward bespoke behavior.',
       icon: Wrench,
     },
   ] as const,
   callout: {
-    text: 'MCP introduces one standard way for AI to interact with external systems. Finally. 🙌',
-    icon: Sparkles,
+    text: 'MCP gives AI one standard way to reach the outside world.',
+    underline: 'standard',
+    icon: PlugZap,
   },
 };
 
@@ -78,80 +80,152 @@ export const problem = {
 /* 3. The Journey                                                     */
 /* ------------------------------------------------------------------ */
 export const evolution = {
-  eyebrow: 'The Journey 🗺️',
-  title: 'Evolution of AI assistants',
+  index: '02',
+  eyebrow: 'The Journey',
+  title: 'How we got here',
+  subhead: 'From isolated models to a shared standard',
   stages: [
     {
       step: '01',
       title: 'Standalone Language Models',
-      description: 'Generate text and answer questions — no external tools, no live data.',
+      description: 'Early models operated in isolation, with no way to reach external systems.',
       highlighted: false,
     },
     {
       step: '02',
       title: 'Custom API Integrations',
-      description: 'Every app hand-builds its own Gmail, GitHub, or database connector.',
+      description: 'Applications introduced proprietary connectors, each tailored to a single vendor.',
       highlighted: false,
     },
     {
       step: '03',
-      title: 'Model Context Protocol ✨',
-      description: 'One common protocol across every AI application.',
+      title: 'Model Context Protocol',
+      description: 'A common protocol that lets any AI application connect to any compatible server.',
       highlighted: true,
     },
   ] as const,
+  arrival: 'the standard',
 };
 
 /* ------------------------------------------------------------------ */
 /* 4. The Definition                                                  */
 /* ------------------------------------------------------------------ */
 export const definition = {
-  eyebrow: 'The Definition 📖',
+  index: '03',
+  eyebrow: 'The Definition',
   title: 'What is Model Context Protocol?',
+  fig: 'FIG. 1 — one hub, many connections',
   bullets: [
     {
       icon: BadgeCheck,
-      text: 'An open standard, published openly and free to implement for anyone.',
+      text: 'An open standard — free to read, free to build on, with no vendor lock-in.',
     },
     {
       icon: Zap,
-      text: 'Connects models to live context and real-time data — not just training data.',
+      text: 'Live context, delivered at query time rather than inferred from stale training data.',
     },
     {
       icon: Globe,
-      text: 'Vendor-neutral and interoperable across every AI app and tool.',
+      text: 'Vendor-neutral by design: it does not depend on any specific model, application, or stack.',
     },
   ] as const,
-  quote: 'Like HTTP standardizes web communication, MCP standardizes AI communication.',
+  quote: 'As HTTP standardized communication between browsers and servers, MCP standardizes communication between AI applications and the systems they use.',
 };
 
 /* ------------------------------------------------------------------ */
 /* 5. The Motivation                                                  */
 /* ------------------------------------------------------------------ */
 export const motivation = {
-  eyebrow: 'The Motivation 🧭',
-  title: 'Why was MCP created?',
+  index: '04',
+  eyebrow: 'The Motivation',
+  title: 'Why MCP exists',
+  intro:
+    'The same three applications, wired to the same three services — two ways. Select an application in either panel and watch how the connections behave.',
+  apps: ['Claude Desktop', 'Cursor IDE', 'Custom Agent'],
+  services: ['Gmail', 'GitHub', 'PostgreSQL'],
+  extraService: 'Slack',
   without: {
-    emoji: '😩',
-    title: 'Without MCP',
-    points: [
-      'Fragmented, one-off integrations for every app',
-      'Repeated effort rebuilding the same connectors',
-      'Inconsistent behavior across vendors',
+    label: 'Without MCP',
+    fig: 'FIG. 3 — the mesh',
+    warnings: ['Broken API update', 'Duplicate auth token', 'Drifting schema'],
+    stats: [
+      { label: 'Direct integrations', value: '9' },
+      { label: 'Custom SDKs', value: '9' },
+      { label: 'Maintenance load', value: 'High' },
     ],
+    statsExtra: [
+      { label: 'Direct integrations', value: '12' },
+      { label: 'Custom SDKs', value: '12' },
+      { label: 'Maintenance load', value: 'Higher' },
+    ],
+    hint: 'One line per app × service. Every pair is a bespoke integration.',
   },
   with: {
-    emoji: '😌',
-    title: 'With MCP',
-    points: [
-      'Build one server — any compatible AI can use it',
-      'One integration, reused everywhere',
-      'Consistent, predictable behavior',
+    label: 'With MCP',
+    fig: 'FIG. 4 — the hub',
+    client: 'MCP Client',
+    hub: 'MCP Server',
+    stats: [
+      { label: 'Connections', value: '6' },
+      { label: 'Protocol', value: 'JSON-RPC 2.0' },
+      { label: 'Codebase footprint', value: '−65%' },
     ],
+    statsExtra: [
+      { label: 'Connections', value: '7' },
+      { label: 'Protocol', value: 'JSON-RPC 2.0' },
+      { label: 'Codebase footprint', value: '−70%' },
+    ],
+    hint: 'Each app connects once. The hub exposes each service once.',
   },
   callout: {
-    text: 'MCP is the USB-C for AI. ⚡ (we’re SO done with 15 cables)',
-    icon: PlugZap,
+    text: 'MCP is the standard interface for AI connectivity.',
+    aside: 'One protocol, defined once, consumed by every compatible application.',
+    underline: 'standard interface',
+  },
+};
+
+/* ------------------------------------------------------------------ */
+/* 5. The Demonstration (interactive with/without MCP)                */
+/* ------------------------------------------------------------------ */
+export const simulation = {
+  index: '05',
+  eyebrow: 'The Demonstration',
+  title: 'What changes, in practice',
+  intro:
+    'Two ways to wire an AI application to the same services. Toggle between the architectures and watch a request travel end to end.',
+  withoutLabel: 'Without MCP',
+  withLabel: 'With MCP',
+  apps: ['App A', 'App B', 'App C'],
+  services: ['Gmail', 'GitHub', 'Database'],
+  hub: 'MCP Server',
+  client: 'MCP Client',
+  counts: {
+    without: '3 apps × 3 services = 9 direct integrations',
+    with: '6 connections, one protocol',
+  },
+  caption: {
+    without:
+      'Every application implements its own connector for every service. Nine bespoke integrations, nine ways to drift.',
+    with: 'Every application speaks one protocol. Each service exposes one server. Requests route through a single standard.',
+  },
+  payloads: {
+    app: '{ "query": "<prompt>", "model": "claude-sonnet", "tools": ["gmail.list", "github.read"] }',
+    client: '{ "method": "tools/call", "params": { "name": "github.create_issue" } }',
+    server: '{ "name": "github", "tools": 9, "schema": "JSON-RPC 2.0" }',
+    serviceOk: '{ "status": "ok", "latency": "120ms" }',
+    serviceErr: '{ "status": "error", "sdk": "custom", "drift": "v2.3" }',
+  },
+  stats: {
+    without: [
+      { label: 'Integrations', value: '9' },
+      { label: 'Maintenance load', value: 'High' },
+      { label: 'Protocol overhead', value: 'N/A — custom SDKs' },
+    ],
+    with: [
+      { label: 'Integrations', value: '1 hub + 3 servers' },
+      { label: 'Codebase footprint', value: '−65%' },
+      { label: 'Schema', value: 'JSON-RPC 2.0' },
+    ],
   },
 };
 
@@ -159,9 +233,12 @@ export const motivation = {
 /* 6. Architecture                                                    */
 /* ------------------------------------------------------------------ */
 export const architecture = {
-  eyebrow: 'The Architecture 🏗️',
-  title: 'How it fits together',
-  intro: 'A request flows from the person, through the host, and out to an external service — all over one protocol.',
+  index: '06',
+  eyebrow: 'The Architecture',
+  title: 'How it actually fits together',
+  intro: 'A single request passes through five components — no custom integration required.',
+  fig: 'FIG. 2 — the request path',
+  giant: 'MCP',
   nodes: [
     { id: 'user', label: 'User', caption: 'You, asking the question', icon: User, protocol: false },
     { id: 'host', label: 'Host', caption: 'The AI app you’re using', icon: AppWindow, protocol: false },
@@ -189,26 +266,30 @@ export const architecture = {
 /* 7. Core Building Blocks                                            */
 /* ------------------------------------------------------------------ */
 export const buildingBlocks = {
-  eyebrow: 'The Building Blocks 🧱',
+  index: '07',
+  eyebrow: 'The Building Blocks',
   title: 'What MCP is made of',
   rows: [
     {
-      icon: FolderOpen,
-      title: 'Resources 📄',
+      tag: '§01',
+      title: 'Resources',
       description: 'Information the AI can read.',
       examples: ['PDFs', 'databases', 'markdown files', 'spreadsheets'],
+      icon: FolderOpen,
     },
     {
-      icon: Wrench,
-      title: 'Tools 🛠️',
+      tag: '§02',
+      title: 'Tools',
       description: 'Actions the AI can perform.',
       examples: ['Send email', 'execute SQL', 'create a GitHub issue'],
+      icon: Wrench,
     },
     {
-      icon: MessageSquareText,
-      title: 'Prompts 💬',
+      tag: '§03',
+      title: 'Prompts',
       description: 'Reusable instructions provided by servers.',
       examples: ['Standardized templates for common tasks'],
+      icon: MessageSquareText,
     },
   ] as const,
 };
@@ -217,7 +298,8 @@ export const buildingBlocks = {
 /* 8. Key Benefits + Closing CTA                                      */
 /* ------------------------------------------------------------------ */
 export const benefits = {
-  eyebrow: 'The Payoff 🎯',
+  index: '08',
+  eyebrow: 'The Payoff',
   title: 'Why it’s worth it',
   tiles: [
     { icon: Link2, label: 'Standardized Integrations' },
@@ -227,9 +309,9 @@ export const benefits = {
     { icon: MonitorSmartphone, label: 'Cross-Platform Interoperability' },
   ] as const,
   callout: {
-    text: 'Now that we understand what MCP is and why it exists, let’s see how it works in practice. 🚀',
+    text: 'You now understand what MCP is and why it matters. The specification is the next step.',
+    cta: { label: 'Read the spec', href: 'https://modelcontextprotocol.io', icon: BookOpen },
   },
-  cta: { label: 'Read the spec', href: 'https://modelcontextprotocol.io', icon: BookOpen },
 };
 
 /* ------------------------------------------------------------------ */
@@ -237,11 +319,11 @@ export const benefits = {
 /* ------------------------------------------------------------------ */
 export const footer = {
   credit:
-    'MCP is an open standard for connecting AI to context. This page is a plain-language explainer — no affiliation, just enthusiasm.',
+    'An independent explainer of the Model Context Protocol, the open standard for connecting AI to context.',
   links: [
-    { label: 'GitHub', href: '#', icon: Github },
-    { label: 'Spec', href: '#', icon: FileText },
-    { label: 'Docs', href: '#', icon: BookOpen },
+    { label: 'GitHub', href: 'https://github.com', icon: Github },
+    { label: 'Spec', href: 'https://modelcontextprotocol.io/specification', icon: FileText },
+    { label: 'Docs', href: 'https://modelcontextprotocol.io/introduction', icon: BookOpen },
   ] as const,
 };
 

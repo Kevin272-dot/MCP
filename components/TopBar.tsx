@@ -29,12 +29,6 @@ export default function TopBar() {
           </span>
           <span className="font-display text-base font-bold text-white">MCP</span>
         </a>
-        <a
-          href="#architecture"
-          className="rounded-lg bg-mint px-4 py-2 text-sm font-semibold text-navy transition-shadow duration-150 hover:shadow-lift"
-        >
-          See how it works
-        </a>
       </div>
     </motion.nav>
   );

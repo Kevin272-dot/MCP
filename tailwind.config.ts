@@ -19,10 +19,13 @@ const config: Config = {
       fontFamily: {
         sans: ['var(--font-sans)', 'system-ui', '-apple-system', 'sans-serif'],
         display: ['var(--font-display)', 'Georgia', 'serif'],
+        mono: ['var(--font-mono)', 'ui-monospace', 'SFMono-Regular', 'monospace'],
       },
       boxShadow: {
-        lift: '0 18px 40px -16px rgb(18 33 62 / 0.18)',
-        'lift-dark': '0 18px 40px -16px rgb(0 0 0 / 0.5)',
+        lift: '0 18px 40px -16px rgb(10 10 12 / 0.35)',
+        'lift-dark': '0 18px 40px -16px rgb(0 0 0 / 0.6)',
+        offset: '6px 6px 0 0 rgb(245 245 246 / 1)',
+        'offset-navy': '6px 6px 0 0 rgb(10 10 12 / 1)',
       },
     },
   },
