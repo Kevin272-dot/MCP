@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------ */
+/* Theme tokens — edit colors here, they swap everywhere on the site   */
+/* Values are RGB channel triplets so Tailwind opacity modifiers work. */
+/* ------------------------------------------------------------------ */
+:root {
+  --navy: 18 33 62; /* #12213E primary dark */
+  --teal: 28 114 147; /* #1C7293 secondary accent */
+  --mint: 0 217 192; /* #00D9C0 sharp accent */
+  --light: 247 249 252; /* #F7F9FC light section bg */
+  --text-muted: 91 107 130; /* #5B6B82 body text on light */
+  --white: 255 255 255;
+  --edge-light: 227 232 240; /* #E3E8F0 subtle light border */
+  --edge-dark: 26 46 82; /* #1A2E52 subtle dark border */
+  --body-on-dark: 199 211 232; /* #C7D3E8 body text on dark */
+  --danger: 226 84 84; /* muted red for "without" bullets */
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-light font-sans text-navy antialiased;
+  }
+
+  ::selection {
+    background-color: rgb(var(--mint));
+    color: rgb(var(--navy));
+  }
+
+  :focus-visible {
+    outline: 2px solid rgb(var(--mint));
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+}
+
+/* Slow ring rotation used by the Definition "one hub, many connections" visual */
+@keyframes orbit {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes orbit-rev {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+/* Users who prefer reduced motion: kill all non-essential animation */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
