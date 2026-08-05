@@ -180,6 +180,7 @@ export default function DashboardPage() {
   const [logs, setLogs] = useState<McpLogEvent[]>([]);
   const [connected, setConnected] = useState(false);
   const [bright, setBright] = useState(false);
+  const [demo, setDemo] = useState(false);
 
   const [url, setUrl] = useState("https://news.ycombinator.com/");
   const [fsPath, setFsPath] = useState(".");
@@ -323,7 +324,8 @@ export default function DashboardPage() {
   );
 
   useEffect(() => {
-    const source = new EventSource("/api/mcp/sse");
+    const sseUrl = `/api/mcp/sse${demo ? "?demo=1" : ""}`;
+    const source = new EventSource(sseUrl);
 
     source.addEventListener("mcp", (raw) => {
       try {
@@ -341,7 +343,7 @@ export default function DashboardPage() {
     return () => {
       source.close();
     };
-  }, [handleEvent]);
+  }, [handleEvent, demo]);
 
   // Keep the canvas in sync with the current queue position.
   useEffect(() => {
@@ -356,7 +358,7 @@ export default function DashboardPage() {
       mountedRef.current = false;
       queueRef.current = [];
     };
-  }, []);
+  }, [apiPath]);
 
   // Auto-scroll the lifecycle log to the newest entry.
   useEffect(() => {
@@ -365,11 +367,13 @@ export default function DashboardPage() {
   }, [logs]);
 
   // ---- Presenter controls --------------------------------------------------
+  const apiPath = useMemo(() => `/api/mcp${demo ? "?demo=1" : ""}`, [demo]);
+
   const invoke = useCallback(async (body: unknown) => {
     setBusy(true);
     setResponse(null);
     try {
-      const res = await fetch("/api/mcp", {
+      const res = await fetch(apiPath, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
@@ -487,6 +491,19 @@ export default function DashboardPage() {
               {connected ? "SSE live" : "SSE connecting…"}
             </span>
             <span className="h-4 w-px bg-edge-dark" aria-hidden="true" />
+            <button
+              type="button"
+              onClick={() => setDemo((v) => !v)}
+              aria-pressed={demo}
+              className={cn(
+                demo
+                  ? "rounded-md bg-mint px-2.5 py-1.5 text-sm font-semibold text-navy"
+                  : "rounded-md border border-edge-dark px-2.5 py-1.5 text-zinc-300",
+                "transition-colors hover:border-white/40 hover:text-white",
+              )}
+            >
+              {demo ? "Demo server" : "Demo server"}
+            </button>
             <button
               type="button"
               onClick={() => setBright((value) => !value)}
