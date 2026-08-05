@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Background,
   BackgroundVariant,
@@ -12,20 +12,20 @@ import {
   useNodesState,
   type Edge,
   type Node,
-} from '@xyflow/react';
-import '@xyflow/react/dist/style.css';
+} from "@xyflow/react";
+import "@xyflow/react/dist/style.css";
 
-import DemoNode, { type DemoNodeData } from '@/components/dashboard/DemoNode';
-import PdfViewer from '@/components/dashboard/PdfViewer';
-import { cn } from '@/lib/cn';
-import type { McpLogEvent, McpStage, McpStep } from '@/lib/mcp/events';
+import DemoNode, { type DemoNodeData } from "@/components/dashboard/DemoNode";
+import PdfViewer from "@/components/dashboard/PdfViewer";
+import { cn } from "@/lib/cn";
+import type { McpLogEvent, McpStage, McpStep } from "@/lib/mcp/events";
 import {
   PIPELINE_EDGE_ID,
   PIPELINE_NODE_ID,
   pipelineStageFromEvent,
   stageIndex,
   type PipelineStage,
-} from '@/lib/mcp/pipeline';
+} from "@/lib/mcp/pipeline";
 
 /**
  * Live "under-the-hood" demo of the MCP server implemented in app/api/mcp.
@@ -48,8 +48,8 @@ import {
 
 const nodeTypes = { demo: DemoNode };
 
-const FLOW_ORDER: McpStep[] = ['A', 'B', 'C', 'D', 'E'];
-const EDGE_IDS = ['A-B', 'B-C', 'C-D', 'D-E'];
+const FLOW_ORDER: McpStep[] = ["A", "B", "C", "D", "E"];
+const EDGE_IDS = ["A-B", "B-C", "C-D", "D-E"];
 
 /** Minimum time each pipeline node stays lit before advancing. */
 const STAGE_HOLD_MS = 400;
@@ -57,19 +57,79 @@ const STAGE_HOLD_MS = 400;
 const TERMINAL_HOLD_MS = 2000;
 
 const BASE_NODES: Node<DemoNodeData>[] = [
-  { id: 'A', type: 'demo', position: { x: 0, y: 120 }, data: { step: 'A', title: 'AI Client', sub: 'User Input', active: false, done: false } },
-  { id: 'B', type: 'demo', position: { x: 270, y: 120 }, data: { step: 'B', title: 'MCP Routing', sub: 'Discovery Handler', active: false, done: false } },
-  { id: 'C', type: 'demo', position: { x: 540, y: 120 }, data: { step: 'C', title: 'Next.js Worker', sub: 'Dynamic API Route', active: false, done: false } },
-  { id: 'D', type: 'demo', position: { x: 810, y: 120 }, data: { step: 'D', title: 'Headless Chrome', sub: 'Scraping Engine', active: false, done: false } },
-  { id: 'E', type: 'demo', position: { x: 1080, y: 120 }, data: { step: 'E', title: 'JSON Payload', sub: 'Formatted Out', active: false, done: false } },
+  {
+    id: "A",
+    type: "demo",
+    position: { x: 0, y: 120 },
+    data: {
+      step: "A",
+      title: "AI Client",
+      sub: "User Input",
+      active: false,
+      done: false,
+      bright: false,
+    },
+  },
+  {
+    id: "B",
+    type: "demo",
+    position: { x: 270, y: 120 },
+    data: {
+      step: "B",
+      title: "MCP Routing",
+      sub: "Discovery Handler",
+      active: false,
+      done: false,
+      bright: false,
+    },
+  },
+  {
+    id: "C",
+    type: "demo",
+    position: { x: 540, y: 120 },
+    data: {
+      step: "C",
+      title: "Next.js Worker",
+      sub: "Dynamic API Route",
+      active: false,
+      done: false,
+      bright: false,
+    },
+  },
+  {
+    id: "D",
+    type: "demo",
+    position: { x: 810, y: 120 },
+    data: {
+      step: "D",
+      title: "Headless Chrome",
+      sub: "Scraping Engine",
+      active: false,
+      done: false,
+      bright: false,
+    },
+  },
+  {
+    id: "E",
+    type: "demo",
+    position: { x: 1080, y: 120 },
+    data: {
+      step: "E",
+      title: "JSON Payload",
+      sub: "Formatted Out",
+      active: false,
+      done: false,
+      bright: false,
+    },
+  },
 ];
 
 // Edge palette — live segments glow emerald-400, done segments keep a dim tint,
 // idle segments stay muted zinc. High contrast against the dark canvas.
-const EMERALD = 'rgb(52 211 153)'; // emerald-400
-const EMERALD_DIM = 'rgb(52 211 153 / 0.35)';
-const IDLE = 'rgb(75 75 82)';
-const LABEL = 'rgb(212 212 216)'; // zinc-300
+const EMERALD = "rgb(52 211 153)"; // emerald-400
+const EMERALD_DIM = "rgb(52 211 153 / 0.35)";
+const IDLE = "rgb(75 75 82)";
+const LABEL = "rgb(212 212 216)"; // zinc-300
 
 function edgeFor(from: McpStep, to: McpStep): Edge {
   return {
@@ -79,42 +139,54 @@ function edgeFor(from: McpStep, to: McpStep): Edge {
     // Only the segment currently carrying data streams its dashes (set in applyFlowState).
     animated: false,
     label: `${from}->${to}`,
-    labelStyle: { fill: LABEL, fontSize: 10, fontFamily: 'JetBrains Mono, monospace' },
-    labelBgStyle: { fill: 'rgb(18 18 22)', opacity: 0.9 },
+    labelStyle: {
+      fill: LABEL,
+      fontSize: 10,
+      fontFamily: "JetBrains Mono, monospace",
+    },
+    labelBgStyle: { fill: "rgb(18 18 22)", opacity: 0.9 },
     labelBgPadding: [4, 2] as [number, number],
-    markerEnd: { type: MarkerType.ArrowClosed, color: IDLE, width: 16, height: 16 },
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: IDLE,
+      width: 16,
+      height: 16,
+    },
     style: { stroke: IDLE, strokeWidth: 1.5 },
   };
 }
 
 const BASE_EDGES: Edge[] = [
-  edgeFor('A', 'B'),
-  edgeFor('B', 'C'),
-  edgeFor('C', 'D'),
-  edgeFor('D', 'E'),
+  edgeFor("A", "B"),
+  edgeFor("B", "C"),
+  edgeFor("C", "D"),
+  edgeFor("D", "E"),
 ];
 
 function formatTime(iso: string): string {
-  return new Date(iso).toLocaleTimeString('en-GB', { hour12: false });
+  return new Date(iso).toLocaleTimeString("en-GB", { hour12: false });
 }
 
 function stageBadge(stage: McpStage): string {
-  return `[${stage.replace('_', '→')}]`;
+  return `[${stage.replace("_", "→")}]`;
 }
 
 export default function DashboardPage() {
-  const [nodes, setNodes, onNodesChange] = useNodesState<Node<DemoNodeData>>(BASE_NODES);
+  const [nodes, setNodes, onNodesChange] =
+    useNodesState<Node<DemoNodeData>>(BASE_NODES);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(BASE_EDGES);
 
-  const [activeStage, setActiveStage] = useState<PipelineStage>('IDLE');
+  const [activeStage, setActiveStage] = useState<PipelineStage>("IDLE");
   const [logs, setLogs] = useState<McpLogEvent[]>([]);
   const [connected, setConnected] = useState(false);
   const [bright, setBright] = useState(false);
 
-  const [url, setUrl] = useState('https://news.ycombinator.com/');
-  const [fsPath, setFsPath] = useState('.');
-  const [fsContent, setFsContent] = useState('Hello from the MCP local file system tool!');
-  const [sysPath, setSysPath] = useState('180dc/vit materials/');
+  const [url, setUrl] = useState("https://news.ycombinator.com/");
+  const [fsPath, setFsPath] = useState(".");
+  const [fsContent, setFsContent] = useState(
+    "Hello from the MCP local file system tool!",
+  );
+  const [sysPath, setSysPath] = useState("180dc/vit materials/");
   const [busy, setBusy] = useState(false);
   const [response, setResponse] = useState<string | null>(null);
   const [pdfResponse, setPdfResponse] = useState<unknown | null>(null);
@@ -124,7 +196,7 @@ export default function DashboardPage() {
   // Animated execution queue: refs keep the playback loop free of stale closures.
   const queueRef = useRef<PipelineStage[]>([]);
   const processingRef = useRef(false);
-  const activeStageRef = useRef<PipelineStage>('IDLE');
+  const activeStageRef = useRef<PipelineStage>("IDLE");
   const mountedRef = useRef(true);
 
   // ---- Node/edge restyling driven by the current pipeline stage ------------
@@ -158,12 +230,14 @@ export default function DashboardPage() {
             ...edge,
             // Data "moves" only on the live segment — every other edge is static.
             animated: isLive,
-            className: isLive ? 'edge-live' : undefined,
+            className: isLive ? "edge-live" : undefined,
             style: {
               ...edge.style,
               stroke: isLive ? EMERALD : isDone ? EMERALD_DIM : IDLE,
               strokeWidth: isLive ? 3 : isDone ? 2.5 : 1.5,
-              filter: isLive ? 'drop-shadow(0 0 6px rgba(52,211,153,0.7))' : undefined,
+              filter: isLive
+                ? "drop-shadow(0 0 6px rgba(52,211,153,0.7))"
+                : undefined,
             },
             markerEnd: {
               type: MarkerType.ArrowClosed,
@@ -171,12 +245,33 @@ export default function DashboardPage() {
               width: isLive ? 18 : 16,
               height: isLive ? 18 : 16,
             },
+            labelStyle: {
+              fill: bright ? "rgb(10 10 12)" : LABEL,
+              fontSize: 10,
+              fontFamily: "JetBrains Mono, monospace",
+            },
+            labelBgStyle: {
+              fill: bright ? "rgb(250 250 250)" : "rgb(18 18 22)",
+              opacity: 0.9,
+            },
           };
         }),
       );
     },
-    [setEdges, setNodes],
+    [bright, setEdges, setNodes],
   );
+
+  useEffect(() => {
+    setNodes((current) =>
+      current.map((node) => ({
+        ...node,
+        data: {
+          ...node.data,
+          bright,
+        },
+      })),
+    );
+  }, [bright, setNodes]);
 
   // ---- Animated execution queue --------------------------------------------
   // SSE frames for a tool call arrive in a burst (often <400ms apart), so a
@@ -184,7 +279,8 @@ export default function DashboardPage() {
   // node glow. We queue every distinct stage and play it back at a minimum
   // pace: STAGE_HOLD_MS per node, TERMINAL_HOLD_MS for the terminal stage,
   // then IDLE. The queue also drains when the next request's events arrive.
-  const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+  const delay = (ms: number) =>
+    new Promise<void>((resolve) => setTimeout(resolve, ms));
 
   const drainQueue = useCallback(async () => {
     if (processingRef.current) return;
@@ -193,11 +289,11 @@ export default function DashboardPage() {
       const stage = queueRef.current.shift()!;
       activeStageRef.current = stage;
       setActiveStage(stage);
-      await delay(stage === 'FORMATTED_OUT' ? TERMINAL_HOLD_MS : STAGE_HOLD_MS);
+      await delay(stage === "FORMATTED_OUT" ? TERMINAL_HOLD_MS : STAGE_HOLD_MS);
     }
     if (mountedRef.current && queueRef.current.length === 0) {
-      activeStageRef.current = 'IDLE';
-      setActiveStage('IDLE');
+      activeStageRef.current = "IDLE";
+      setActiveStage("IDLE");
     }
     processingRef.current = false;
   }, []);
@@ -208,11 +304,11 @@ export default function DashboardPage() {
       setLogs((prev) => [...prev.slice(-199), event]);
 
       const stage = pipelineStageFromEvent(event);
-      if (stage === 'IDLE') {
+      if (stage === "IDLE") {
         // Failure / unknown event — clear the queue and the canvas right away.
         queueRef.current = [];
-        activeStageRef.current = 'IDLE';
-        setActiveStage('IDLE');
+        activeStageRef.current = "IDLE";
+        setActiveStage("IDLE");
         return;
       }
 
@@ -227,11 +323,13 @@ export default function DashboardPage() {
   );
 
   useEffect(() => {
-    const source = new EventSource('/api/mcp/sse');
+    const source = new EventSource("/api/mcp/sse");
 
-    source.addEventListener('mcp', (raw) => {
+    source.addEventListener("mcp", (raw) => {
       try {
-        handleEvent(JSON.parse((raw as MessageEvent<string>).data) as McpLogEvent);
+        handleEvent(
+          JSON.parse((raw as MessageEvent<string>).data) as McpLogEvent,
+        );
       } catch {
         // Ignore malformed frames; the next one may be valid.
       }
@@ -252,16 +350,13 @@ export default function DashboardPage() {
 
   // Stop the playback loop if the page unmounts mid-drain. (StrictMode
   // double-mounts effects in dev, so the ref is re-armed on every mount.)
-  useEffect(
-    () => {
-      mountedRef.current = true;
-      return () => {
-        mountedRef.current = false;
-        queueRef.current = [];
-      };
-    },
-    [],
-  );
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      queueRef.current = [];
+    };
+  }, []);
 
   // Auto-scroll the lifecycle log to the newest entry.
   useEffect(() => {
@@ -274,42 +369,55 @@ export default function DashboardPage() {
     setBusy(true);
     setResponse(null);
     try {
-      const res = await fetch('/api/mcp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/mcp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
       const data: unknown = await res.json();
       setResponse(JSON.stringify(data, null, 2));
       // The PDF viewer dashboard item renders whenever read_pdf_file replies.
-      const toolName = (body as { params?: { name?: unknown } } | undefined)?.params?.name;
-      setPdfResponse(toolName === 'read_pdf_file' ? data : null);
+      const toolName = (body as { params?: { name?: unknown } } | undefined)
+        ?.params?.name;
+      setPdfResponse(toolName === "read_pdf_file" ? data : null);
     } catch (error) {
-      setResponse(JSON.stringify({ error: error instanceof Error ? error.message : String(error) }, null, 2));
+      setResponse(
+        JSON.stringify(
+          { error: error instanceof Error ? error.message : String(error) },
+          null,
+          2,
+        ),
+      );
     } finally {
       setBusy(false);
     }
   }, []);
 
-  const runToolsList = useCallback(() => invoke({ jsonrpc: '2.0', id: 1, method: 'tools/list' }), [invoke]);
+  const runToolsList = useCallback(
+    () => invoke({ jsonrpc: "2.0", id: 1, method: "tools/list" }),
+    [invoke],
+  );
   const runToolCall = useCallback(
     () =>
       invoke({
-        jsonrpc: '2.0',
+        jsonrpc: "2.0",
         id: 2,
-        method: 'tools/call',
-        params: { name: 'chrome_fetch_headline', arguments: { url } },
+        method: "tools/call",
+        params: { name: "chrome_fetch_headline", arguments: { url } },
       }),
     [invoke, url],
   );
 
   // Local file system tools — paths are resolved against the configured root.
   const runFsTool = useCallback(
-    (name: 'read_local_file' | 'write_local_file' | 'list_local_dir', args: Record<string, unknown>) =>
+    (
+      name: "read_local_file" | "write_local_file" | "list_local_dir",
+      args: Record<string, unknown>,
+    ) =>
       invoke({
-        jsonrpc: '2.0',
+        jsonrpc: "2.0",
         id: Date.now(),
-        method: 'tools/call',
+        method: "tools/call",
         params: { name, arguments: args },
       }),
     [invoke],
@@ -318,13 +426,17 @@ export default function DashboardPage() {
   // Host system tools — paths are resolved against MCP_SYSTEM_ROOT (default "/").
   const runSystemTool = useCallback(
     (
-      name: 'read_system_file' | 'write_system_file' | 'list_system_dir' | 'read_pdf_file',
+      name:
+        | "read_system_file"
+        | "write_system_file"
+        | "list_system_dir"
+        | "read_pdf_file",
       args: Record<string, unknown>,
     ) =>
       invoke({
-        jsonrpc: '2.0',
+        jsonrpc: "2.0",
         id: Date.now(),
-        method: 'tools/call',
+        method: "tools/call",
         params: { name, arguments: args },
       }),
     [invoke],
@@ -332,15 +444,27 @@ export default function DashboardPage() {
 
   const minimapColors = useMemo(
     () => ({
-      nodeColor: (n: Node<DemoNodeData>) => (n.data.active ? 'rgb(245 245 246 / 0.9)' : 'rgb(40 40 44)'),
-      maskColor: 'rgb(10 10 12 / 0.75)',
-      bgColor: 'rgb(18 18 22)',
+      nodeColor: (n: Node<DemoNodeData>) =>
+        bright
+          ? n.data.active
+            ? "rgb(10 10 12 / 0.9)"
+            : "rgb(40 40 44)"
+          : n.data.active
+            ? "rgb(245 245 246 / 0.9)"
+            : "rgb(40 40 44)",
+      maskColor: bright ? "rgb(250 250 250 / 0.72)" : "rgb(10 10 12 / 0.75)",
+      bgColor: bright ? "rgb(250 250 250)" : "rgb(18 18 22)",
     }),
-    [],
+    [bright],
   );
 
   return (
-    <main className={cn('relative min-h-screen overflow-x-hidden bg-navy text-white', bright && 'invert hue-rotate-180')}>
+    <main
+      className={cn(
+        "relative min-h-screen overflow-x-hidden bg-navy text-white",
+        bright && "invert hue-rotate-180",
+      )}
+    >
       <header className="border-b border-edge-dark">
         <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
           <div>
@@ -353,11 +477,14 @@ export default function DashboardPage() {
           </div>
           <div className="flex items-center gap-3 font-mono text-xs">
             <span
-              className={cn('h-2.5 w-2.5 rounded-full transition-colors', connected ? 'bg-mint' : 'bg-body-dark')}
+              className={cn(
+                "h-2.5 w-2.5 rounded-full transition-colors",
+                connected ? "bg-mint" : "bg-body-dark",
+              )}
               aria-hidden="true"
             />
-            <span className={cn(connected ? 'text-mint' : 'text-body-dark')}>
-              {connected ? 'SSE live' : 'SSE connecting…'}
+            <span className={cn(connected ? "text-mint" : "text-body-dark")}>
+              {connected ? "SSE live" : "SSE connecting…"}
             </span>
             <span className="h-4 w-px bg-edge-dark" aria-hidden="true" />
             <button
@@ -366,7 +493,7 @@ export default function DashboardPage() {
               aria-pressed={bright}
               className="rounded-md border border-edge-dark px-2.5 py-1.5 text-zinc-300 transition-colors hover:border-white/40 hover:text-white"
             >
-              {bright ? 'Dark mode' : 'Bright mode'}
+              {bright ? "Dark mode" : "Bright mode"}
             </button>
           </div>
         </div>
@@ -376,7 +503,13 @@ export default function DashboardPage() {
         {/* Left: the React Flow canvas -------------------------------------- */}
         <section
           aria-label="MCP request flow"
-          className="relative h-[520px] min-w-0 overflow-hidden rounded-xl border border-edge-dark bg-[#0d0d10]"
+          className={cn(
+            "relative h-[520px] min-w-0 overflow-hidden rounded-xl border",
+            bright && "invert hue-rotate-180",
+            bright
+              ? "border-edge-light bg-[#fafafa] text-navy"
+              : "border-edge-dark bg-[#0d0d10] text-white",
+          )}
         >
           <ReactFlow<Node<DemoNodeData>, Edge>
             nodes={nodes}
@@ -390,7 +523,12 @@ export default function DashboardPage() {
             maxZoom={1.4}
             proOptions={{ hideAttribution: true }}
           >
-            <Background variant={BackgroundVariant.Dots} gap={22} size={1} color="rgb(75 75 82 / 0.5)" />
+            <Background
+              variant={BackgroundVariant.Dots}
+              gap={22}
+              size={1}
+              color={bright ? "rgb(161 161 170 / 0.65)" : "rgb(75 75 82 / 0.5)"}
+            />
             <MiniMap {...minimapColors} pannable zoomable />
             <Controls showInteractive={false} className="flow-controls" />
           </ReactFlow>
@@ -398,12 +536,20 @@ export default function DashboardPage() {
 
         {/* Right: controls + live log + response ---------------------------- */}
         <div className="flex min-w-0 flex-col gap-6">
-          <section aria-label="Presenter controls" className="rounded-xl border border-edge-dark bg-[#121216] p-5">
-            <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-mint">Drive the demo</h2>
+          <section
+            aria-label="Presenter controls"
+            className="rounded-xl border border-edge-dark bg-[#121216] p-5"
+          >
+            <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-mint">
+              Drive the demo
+            </h2>
 
             <div className="mt-4 flex flex-col gap-3">
               <div>
-                <label htmlFor="target-url" className="mb-1 block font-mono text-[11px] uppercase tracking-[0.14em] text-zinc-400">
+                <label
+                  htmlFor="target-url"
+                  className="mb-1 block font-mono text-[11px] uppercase tracking-[0.14em] text-zinc-400"
+                >
                   Target URL
                 </label>
                 <input
@@ -431,22 +577,32 @@ export default function DashboardPage() {
                   disabled={busy}
                   className="rounded-md bg-mint px-3 py-2.5 text-sm font-semibold text-navy transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  {busy ? 'Running…' : 'chrome_fetch_headline'}
+                  {busy ? "Running…" : "chrome_fetch_headline"}
                 </button>
               </div>
 
               <p className="font-mono text-[10px] leading-relaxed text-zinc-400">
-                The buttons POST a JSON-RPC envelope straight to /api/mcp — the same wire message any MCP client (Claude, the inspector, curl) would send.
+                The buttons POST a JSON-RPC envelope straight to /api/mcp — the
+                same wire message any MCP client (Claude, the inspector, curl)
+                would send.
               </p>
             </div>
           </section>
 
-          <section aria-label="Local file system tools" className="rounded-xl border border-edge-dark bg-[#121216] p-5">
-            <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-mint">Local file system</h2>
+          <section
+            aria-label="Local file system tools"
+            className="rounded-xl border border-edge-dark bg-[#121216] p-5"
+          >
+            <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-mint">
+              Local file system
+            </h2>
 
             <div className="mt-4 flex flex-col gap-3">
               <div>
-                <label htmlFor="fs-path" className="mb-1 block font-mono text-[11px] uppercase tracking-[0.14em] text-zinc-400">
+                <label
+                  htmlFor="fs-path"
+                  className="mb-1 block font-mono text-[11px] uppercase tracking-[0.14em] text-zinc-400"
+                >
                   Path (relative to allowed root)
                 </label>
                 <input
@@ -460,7 +616,10 @@ export default function DashboardPage() {
               </div>
 
               <div>
-                <label htmlFor="fs-content" className="mb-1 block font-mono text-[11px] uppercase tracking-[0.14em] text-zinc-400">
+                <label
+                  htmlFor="fs-content"
+                  className="mb-1 block font-mono text-[11px] uppercase tracking-[0.14em] text-zinc-400"
+                >
                   Content (write_local_file only)
                 </label>
                 <textarea
@@ -475,7 +634,7 @@ export default function DashboardPage() {
               <div className="grid grid-cols-3 gap-3">
                 <button
                   type="button"
-                  onClick={() => runFsTool('read_local_file', { path: fsPath })}
+                  onClick={() => runFsTool("read_local_file", { path: fsPath })}
                   disabled={busy}
                   className="rounded-md border border-edge-dark px-3 py-2.5 text-sm font-semibold text-body-dark transition-colors hover:border-white/40 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                 >
@@ -483,7 +642,12 @@ export default function DashboardPage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => runFsTool('write_local_file', { path: fsPath, content: fsContent })}
+                  onClick={() =>
+                    runFsTool("write_local_file", {
+                      path: fsPath,
+                      content: fsContent,
+                    })
+                  }
                   disabled={busy}
                   className="rounded-md border border-edge-dark px-3 py-2.5 text-sm font-semibold text-body-dark transition-colors hover:border-white/40 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                 >
@@ -491,7 +655,7 @@ export default function DashboardPage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => runFsTool('list_local_dir', { path: fsPath })}
+                  onClick={() => runFsTool("list_local_dir", { path: fsPath })}
                   disabled={busy}
                   className="rounded-md border border-edge-dark px-3 py-2.5 text-sm font-semibold text-body-dark transition-colors hover:border-white/40 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                 >
@@ -500,17 +664,27 @@ export default function DashboardPage() {
               </div>
 
               <p className="font-mono text-[10px] leading-relaxed text-zinc-400">
-                Paths are sandboxed to the configured root (MCP_FS_ROOT, default: project root). A trailing path like &quot;../..&quot; is rejected server-side.
+                Paths are sandboxed to the configured root (MCP_FS_ROOT,
+                default: project root). A trailing path like &quot;../..&quot;
+                is rejected server-side.
               </p>
             </div>
           </section>
 
-          <section aria-label="Host system tools" className="rounded-xl border border-edge-dark bg-[#121216] p-5">
-            <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-mint">Host system</h2>
+          <section
+            aria-label="Host system tools"
+            className="rounded-xl border border-edge-dark bg-[#121216] p-5"
+          >
+            <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-mint">
+              Host system
+            </h2>
 
             <div className="mt-4 flex flex-col gap-3">
               <div>
-                <label htmlFor="sys-path" className="mb-1 block font-mono text-[11px] uppercase tracking-[0.14em] text-zinc-400">
+                <label
+                  htmlFor="sys-path"
+                  className="mb-1 block font-mono text-[11px] uppercase tracking-[0.14em] text-zinc-400"
+                >
                   Path (relative to system root)
                 </label>
                 <input
@@ -526,7 +700,9 @@ export default function DashboardPage() {
               <div className="grid grid-cols-4 gap-3">
                 <button
                   type="button"
-                  onClick={() => runSystemTool('read_system_file', { path: sysPath })}
+                  onClick={() =>
+                    runSystemTool("read_system_file", { path: sysPath })
+                  }
                   disabled={busy}
                   className="rounded-md border border-edge-dark px-3 py-2.5 text-sm font-semibold text-body-dark transition-colors hover:border-white/40 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                 >
@@ -534,7 +710,12 @@ export default function DashboardPage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => runSystemTool('write_system_file', { path: sysPath, content: fsContent })}
+                  onClick={() =>
+                    runSystemTool("write_system_file", {
+                      path: sysPath,
+                      content: fsContent,
+                    })
+                  }
                   disabled={busy}
                   className="rounded-md border border-edge-dark px-3 py-2.5 text-sm font-semibold text-body-dark transition-colors hover:border-white/40 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                 >
@@ -542,7 +723,9 @@ export default function DashboardPage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => runSystemTool('list_system_dir', { path: sysPath })}
+                  onClick={() =>
+                    runSystemTool("list_system_dir", { path: sysPath })
+                  }
                   disabled={busy}
                   className="rounded-md border border-edge-dark px-3 py-2.5 text-sm font-semibold text-body-dark transition-colors hover:border-white/40 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                 >
@@ -550,7 +733,9 @@ export default function DashboardPage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => runSystemTool('read_pdf_file', { path: sysPath })}
+                  onClick={() =>
+                    runSystemTool("read_pdf_file", { path: sysPath })
+                  }
                   disabled={busy}
                   className="rounded-md bg-mint px-3 py-2.5 text-sm font-semibold text-navy transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
                 >
@@ -559,57 +744,94 @@ export default function DashboardPage() {
               </div>
 
               <p className="font-mono text-[10px] leading-relaxed text-zinc-400">
-                Reaches outside the sandbox onto the host machine. Root is MCP_SYSTEM_ROOT (default: &quot;/&quot;); the pdf button parses via pdf-parse and returns text + metadata.
+                Reaches outside the sandbox onto the host machine. Root is
+                MCP_SYSTEM_ROOT (default: &quot;/&quot;); the pdf button parses
+                via pdf-parse and returns text + metadata.
               </p>
             </div>
           </section>
 
-          <section aria-label="Live lifecycle log" className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-edge-dark bg-[#0a0a0c]">
+          <section
+            aria-label="Live lifecycle log"
+            className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-edge-dark bg-[#0a0a0c]"
+          >
             <div className="flex items-center justify-between border-b border-edge-dark px-4 py-2.5">
-              <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-mint">Lifecycle log</h2>
-              <span className="font-mono text-[10px] text-zinc-400">{logs.length} events</span>
+              <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-mint">
+                Lifecycle log
+              </h2>
+              <span className="font-mono text-[10px] text-zinc-400">
+                {logs.length} events
+              </span>
             </div>
-            <ul ref={logRef} className="h-64 space-y-1.5 overflow-y-auto p-3 font-mono text-[11px] leading-snug">
+            <ul
+              ref={logRef}
+              className="h-64 space-y-1.5 overflow-y-auto p-3 font-mono text-[11px] leading-snug"
+            >
               {logs.length === 0 && (
                 <li className="text-body-dark">
-                  <span className="text-mint">▸</span> waiting for a request… run tools/list or chrome_fetch_headline.
+                  <span className="text-mint">▸</span> waiting for a request…
+                  run tools/list or chrome_fetch_headline.
                 </li>
               )}
               {logs.map((event) => (
                 <li key={event.id} className="flex gap-2">
-                  <span className="shrink-0 text-body-dark">{formatTime(event.at)}</span>
+                  <span className="shrink-0 text-body-dark">
+                    {formatTime(event.at)}
+                  </span>
                   <span
                     className={cn(
-                      'shrink-0 font-bold',
-                      event.level === 'error' ? 'text-red-400' : event.level === 'ok' ? 'text-mint' : 'text-zinc-300',
+                      "shrink-0 font-bold",
+                      event.level === "error"
+                        ? "text-red-400"
+                        : event.level === "ok"
+                          ? "text-mint"
+                          : "text-zinc-300",
                     )}
                   >
                     {stageBadge(event.stage)}
                   </span>
                   <span className="min-w-0">
-                    <span className={cn('font-semibold', event.level === 'error' ? 'text-red-300' : 'text-white')}>
+                    <span
+                      className={cn(
+                        "font-semibold",
+                        event.level === "error" ? "text-red-300" : "text-white",
+                      )}
+                    >
                       {event.title}
                     </span>
                     <span className="text-zinc-400"> — {event.detail}</span>
-                    {event.tool && <span className="text-mint"> · tool={event.tool}</span>}
-                    {event.url && <span className="text-zinc-500"> · {event.url}</span>}
-                    {event.status === 'success' && <span className="text-mint"> · ok</span>}
-                    {event.status === 'error' && <span className="text-red-400"> · failed</span>}
+                    {event.tool && (
+                      <span className="text-mint"> · tool={event.tool}</span>
+                    )}
+                    {event.url && (
+                      <span className="text-zinc-500"> · {event.url}</span>
+                    )}
+                    {event.status === "success" && (
+                      <span className="text-mint"> · ok</span>
+                    )}
+                    {event.status === "error" && (
+                      <span className="text-red-400"> · failed</span>
+                    )}
                   </span>
                 </li>
               ))}
             </ul>
           </section>
 
-          <section aria-label="Server response" className="overflow-hidden rounded-xl border border-edge-dark bg-[#0a0a0c]">
+          <section
+            aria-label="Server response"
+            className="overflow-hidden rounded-xl border border-edge-dark bg-[#0a0a0c]"
+          >
             <div className="border-b border-edge-dark px-4 py-2.5">
-              <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-mint">JSON-RPC response</h2>
+              <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-mint">
+                JSON-RPC response
+              </h2>
             </div>
             {pdfResponse ? (
               <PdfViewer response={pdfResponse} />
             ) : (
               <pre className="h-44 overflow-auto whitespace-pre-wrap break-words p-3 font-mono text-[11px] leading-relaxed text-zinc-300">
-                {response ?? 'No request sent yet.'}
+                {response ?? "No request sent yet."}
               </pre>
             )}
           </section>

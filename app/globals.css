@@ -230,13 +230,29 @@ html.lenis body {
 }
 
 /* Architecture flow: node highlight while the request pulse passes through */
+@keyframes arch-node-glow {
+  0%, 100% {
+    box-shadow: 0 0 10px 1px rgb(245 245 246 / 0.3), inset 0 0 10px 0 rgb(245 245 246 / 0.06);
+  }
+  50% {
+    box-shadow: 0 0 24px 6px rgb(245 245 246 / 0.55), inset 0 0 16px 2px rgb(245 245 246 / 0.12);
+  }
+}
+
 .arch-node-active {
   border-color: rgb(var(--mint)) !important;
-  background-color: rgb(245 245 246 / 0.08) !important;
+  background-color: rgb(245 245 246 / 0.12) !important;
+  animation: arch-node-glow 1.6s ease-in-out infinite;
 }
 
 .arch-node-active .node-title {
   color: rgb(var(--mint)) !important;
+  text-shadow: 0 0 10px rgb(245 245 246 / 0.9), 0 0 24px rgb(245 245 246 / 0.5);
+}
+
+/* Architecture flow: request pulse line glows as it travels */
+.arch-pulse-line {
+  filter: drop-shadow(0 0 6px rgb(245 245 246 / 0.9));
 }
 
 /* Simulation: lines flashed while a request travels */

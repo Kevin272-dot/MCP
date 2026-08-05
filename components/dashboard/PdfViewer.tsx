@@ -653,10 +653,29 @@ type FlowStep = (typeof FLOW_STEPS)[number];
 
 const PDF_VIEWER_CSS = `
 @keyframes pdfviewer-glow-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.45); }
-  50% { box-shadow: 0 0 22px 3px rgba(52, 211, 153, 0.75); }
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.55),
+      0 0 12px 1px rgba(52, 211, 153, 0.45),
+      inset 0 0 8px 0 rgba(52, 211, 153, 0.18);
+  }
+  50% {
+    box-shadow: 0 0 30px 6px rgba(52, 211, 153, 0.85),
+      0 0 48px 10px rgba(16, 185, 129, 0.4),
+      inset 0 0 18px 2px rgba(52, 211, 153, 0.35);
+  }
+}
+@keyframes pdfviewer-halo {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.8; }
 }
 .pdfviewer-glow { animation: pdfviewer-glow-pulse 1.6s ease-in-out infinite; }
+.pdfviewer-halo { animation: pdfviewer-halo 1.6s ease-in-out infinite; }
+.pdfviewer-text-glow {
+  text-shadow: 0 0 12px rgba(110, 231, 183, 0.9), 0 0 28px rgba(52, 211, 153, 0.6);
+}
+.pdfviewer-icon-glow {
+  box-shadow: 0 0 14px 2px rgba(52, 211, 153, 0.55), 0 0 26px 6px rgba(16, 185, 129, 0.3);
+}
 `;
 
 function FlowNode({
@@ -690,14 +709,14 @@ function FlowNode({
       className={cn(
         'relative flex-1 cursor-pointer rounded-xl border-2 px-4 py-4 transition-all duration-300',
         active
-          ? 'pdfviewer-glow scale-[1.03] border-emerald-400 bg-emerald-950/40'
+          ? 'pdfviewer-glow scale-[1.03] border-emerald-400 bg-emerald-500/10'
           : 'border-edge-dark bg-white/[0.03] hover:border-white/30',
       )}
     >
       <span
         className={cn(
           'absolute left-3 top-3 font-mono text-[10px] tracking-[0.14em]',
-          active ? 'text-emerald-300' : 'text-zinc-500',
+          active ? 'pdfviewer-text-glow text-emerald-300' : 'text-zinc-500',
         )}
       >
         0{index + 1}
@@ -706,9 +725,9 @@ function FlowNode({
       <div className="flex items-center gap-3">
         <span
           className={cn(
-            'grid h-10 w-10 shrink-0 place-items-center rounded-lg border transition-colors duration-300',
+            'grid h-10 w-10 shrink-0 place-items-center rounded-lg border transition-all duration-300',
             active
-              ? 'border-emerald-400/60 bg-emerald-400/15 text-emerald-300'
+              ? 'pdfviewer-icon-glow border-emerald-400 bg-emerald-400/25 text-emerald-200'
               : 'border-edge-dark bg-white/[0.04] text-zinc-400',
           )}
         >
@@ -718,7 +737,7 @@ function FlowNode({
           <p
             className={cn(
               'truncate text-sm font-bold leading-tight',
-              active ? 'text-emerald-200' : 'text-white',
+              active ? 'pdfviewer-text-glow text-emerald-100' : 'text-white',
             )}
           >
             {step.title}
@@ -730,10 +749,16 @@ function FlowNode({
       </div>
 
       {active && (
-        <span className="absolute -right-1.5 -top-1.5 flex h-3 w-3" aria-hidden="true">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-          <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-400" />
-        </span>
+        <>
+          <span
+            aria-hidden="true"
+            className="pdfviewer-halo pointer-events-none absolute -inset-3 -z-10 rounded-2xl bg-emerald-400/25 blur-xl"
+          />
+          <span className="absolute -right-1.5 -top-1.5 flex h-3 w-3" aria-hidden="true">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-75" />
+            <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-300 shadow-[0_0_10px_2px_rgba(52,211,153,0.9)]" />
+          </span>
+        </>
       )}
     </div>
   );
@@ -765,7 +790,7 @@ function FlowchartView() {
 
   return (
     <div className="p-4 sm:p-6">
-      <div className="flex flex-col items-stretch gap-3 lg:flex-row lg:items-center">
+      <div className="isolate flex flex-col items-stretch gap-3 lg:flex-row lg:items-center">
         {FLOW_STEPS.map((step, index) => (
           <Fragment key={step.title}>
             <FlowNode
@@ -786,7 +811,7 @@ function FlowchartView() {
                   className={cn(
                     'h-5 w-5 rotate-90 transition-colors duration-300 lg:rotate-0',
                     active >= index
-                      ? 'animate-pulse text-emerald-400 drop-shadow-[0_0_6px_rgba(52,211,153,0.8)]'
+                      ? 'animate-pulse text-emerald-300 drop-shadow-[0_0_8px_rgba(110,231,183,1)]'
                       : 'text-zinc-600',
                   )}
                 />

@@ -17,15 +17,15 @@ function FlowNode({ node, register }: { node: Node; register: (id: string, el: H
     <div
       ref={(el) => register(node.id, el)}
       className={cn(
-        'flex min-w-0 flex-1 flex-col items-center justify-center gap-2 rounded-md border bg-[#141416] px-2 py-5 text-center',
-        node.protocol ? 'border-mint/50' : 'border-edge-dark',
+        'flex min-w-0 flex-1 flex-col items-center justify-center gap-2 rounded-md border bg-white/[0.07] px-2 py-5 text-center shadow-[0_0_18px_rgba(245,245,246,0.06)]',
+        node.protocol ? 'border-mint/80' : 'border-white/25',
       )}
     >
       <IconBadge icon={node.icon} size="md" tone={node.protocol ? 'mint' : 'teal'} />
       <p className={cn('node-title text-sm font-semibold leading-tight', node.protocol ? 'text-mint' : 'text-white')}>
         {node.label}
       </p>
-      <p className="text-xs leading-snug text-body-dark">{node.caption}</p>
+      <p className="text-xs leading-snug text-zinc-300">{node.caption}</p>
     </div>
   );
 }
@@ -35,7 +35,7 @@ function ProtocolGroup({ register }: { register: (id: string, el: HTMLElement | 
   const server = architecture.nodes[3];
   return (
     <div className="flex flex-1 flex-col">
-      <div className="flex h-full items-stretch gap-2 rounded-md border-2 border-mint/40 bg-mint/5 p-2">
+      <div className="flex h-full items-stretch gap-2 rounded-md border-2 border-mint/60 bg-mint/10 p-2">
         <FlowNode node={client} register={register} />
         <div className="flex items-center text-mint" aria-hidden="true">
           <ChevronRight className="h-5 w-5" />
@@ -233,7 +233,7 @@ export default function ArchitectureSection() {
             className="pointer-events-none absolute inset-0 z-0 h-full w-full overflow-visible"
             fill="none"
           >
-            <path ref={lineRef} stroke="rgb(var(--edge-dark))" strokeWidth="1.5" />
+            <path ref={lineRef} stroke="rgb(245 245 246 / 0.4)" strokeWidth="1.5" />
             <path
               ref={pulseRef}
               stroke="rgb(var(--mint))"
@@ -241,6 +241,7 @@ export default function ArchitectureSection() {
               strokeLinecap="round"
               strokeDasharray="0.1 24"
               opacity="0"
+              className="arch-pulse-line"
             />
           </svg>
 
@@ -270,7 +271,7 @@ export default function ArchitectureSection() {
               <div className="flex justify-center py-1 text-mint" aria-hidden="true">
                 <ChevronDown className="h-6 w-6" />
               </div>
-              <div className="rounded-md border-2 border-mint/40 bg-mint/5 p-2">
+              <div className="rounded-md border-2 border-mint/60 bg-mint/10 p-2">
                 <FlowNode node={architecture.nodes[2]} register={register} />
                 <div className="flex justify-center py-1 text-mint" aria-hidden="true">
                   <ChevronDown className="h-6 w-6" />
