@@ -358,7 +358,7 @@ export default function DashboardPage() {
       mountedRef.current = false;
       queueRef.current = [];
     };
-  }, [apiPath]);
+  }, []);
 
   // Auto-scroll the lifecycle log to the newest entry.
   useEffect(() => {
@@ -395,7 +395,7 @@ export default function DashboardPage() {
     } finally {
       setBusy(false);
     }
-  }, []);
+  }, [apiPath]);
 
   const runToolsList = useCallback(
     () => invoke({ jsonrpc: "2.0", id: 1, method: "tools/list" }),
