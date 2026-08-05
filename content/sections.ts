@@ -31,7 +31,7 @@ import {
 export const hero = {
   eyebrow: "MCP in plain English",
   title: [
-    { text: "MCP made ", accent: false },
+    { text: "MCP  made  ", accent: false },
     { text: "simple", accent: true },
   ] as const,
   subhead: "One shared way for AI apps to use tools and data",
